@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SecureShift</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Main menu -->
+  <div id="main-menu-screen" class="menu-screen">
+    <div class="menu-grid-overlay"></div>
+    <div class="menu-content">
+      <div class="menu-title">SECURESHIFT</div>
+      <div class="menu-subtitle">A Day at Work</div>
+      <div class="menu-tagline">Cybersecurity Awareness Simulation</div>
+      <div class="menu-buttons">
+        <button id="btn-start-shift" class="menu-btn menu-btn-primary">START SHIFT</button>
+        <button id="btn-game-details" class="menu-btn">GAME DETAILS</button>
+        <button id="btn-how-to-play" class="menu-btn">HOW TO PLAY</button>
+        <button id="btn-exit" class="menu-btn">EXIT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Difficulty select -->
+  <div id="difficulty-screen" class="menu-screen" style="display: none;">
+    <div class="menu-grid-overlay"></div>
+    <div class="menu-content menu-content-wide">
+      <div class="menu-title menu-title-small">SELECT DIFFICULTY</div>
+      <div class="menu-tagline" style="margin-bottom: 30px;">Choose how many tasks you'll handle this shift</div>
+      <div class="difficulty-list">
+        <button class="difficulty-card difficulty-easy" data-difficulty="easy">
+          <div class="difficulty-name">EASY</div>
+          <div class="difficulty-line">5 questions</div>
+          <div class="difficulty-line">2:00 time limit</div>
+          <div class="difficulty-hint">Complete all 5 correctly to win</div>
+        </button>
+        <button class="difficulty-card difficulty-medium" data-difficulty="medium">
+          <div class="difficulty-name">MEDIUM</div>
+          <div class="difficulty-line">10 questions</div>
+          <div class="difficulty-line">4:00 time limit</div>
+          <div class="difficulty-hint">Complete all 10 correctly to win</div>
+        </button>
+        <button class="difficulty-card difficulty-hard" data-difficulty="hard">
+          <div class="difficulty-name">HARD</div>
+          <div class="difficulty-line">60 questions</div>
+          <div class="difficulty-line difficulty-no-limit">NO TIME LIMIT</div>
+          <div class="difficulty-hint">Complete all 60 correctly to win</div>
+        </button>
+      </div>
+      <button id="difficulty-back-btn" class="menu-btn menu-btn-back">BACK</button>
+    </div>
+  </div>
+
+  <div id="game-details-screen" class="menu-screen" style="display: none;">
+    <div class="menu-content menu-content-text">
+      <div class="menu-title menu-title-small">GAME DETAILS</div>
+      <p>SECURESHIFT is a workplace cybersecurity awareness simulation.</p>
+      <p>You are a junior IT/security employee starting your first shift.</p>
+      <p>Your job is to help employees identify suspicious emails, messages, websites and security events.</p>
+      <p>Click the sender / contact name to reveal full technical details — that's how you spot phishing.</p>
+      <button id="game-details-back-btn" class="menu-btn">BACK</button>
+    </div>
+  </div>
+
+  <div id="how-to-play-screen" class="menu-screen" style="display: none;">
+    <div class="menu-content menu-content-text">
+      <div class="menu-title menu-title-small">HOW TO PLAY</div>
+      <ul class="howto-list">
+        <li><strong>WASD</strong> &mdash; Move</li>
+        <li><strong>MOUSE</strong> &mdash; Look around</li>
+        <li><strong>E</strong> &mdash; Interact with employees</li>
+        <li><strong>ESC</strong> &mdash; Pause</li>
+      </ul>
+      <p>Approach an employee and press E to inspect their workstation.</p>
+      <p><strong>Click the sender name</strong> in Mail or Chat to reveal the real email address, reply-to address and SPF/DKIM status.</p>
+      <p>Click the <strong>EMPLOYEE ROSTER</strong> card (top-left) to expand the roster.</p>
+      <button id="how-to-play-back-btn" class="menu-btn">BACK</button>
+    </div>
+  </div>
+
+  <div id="exit-confirm-screen" class="menu-screen" style="display: none;">
+    <div class="menu-content menu-content-narrow">
+      <div class="menu-title menu-title-small">EXIT SECURESHIFT?</div>
+      <div class="menu-buttons menu-buttons-row">
+        <button id="exit-cancel-btn" class="menu-btn">CANCEL</button>
+        <button id="exit-confirm-btn" class="menu-btn menu-btn-primary">RETURN TO MAIN MENU</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pause-menu-screen" class="menu-screen" style="display: none;">
+    <div class="menu-content menu-content-narrow">
+      <div class="menu-title menu-title-small">GAME PAUSED</div>
+      <div class="menu-buttons">
+        <button id="pause-resume-btn" class="menu-btn menu-btn-primary">RESUME</button>
+        <button id="pause-game-details-btn" class="menu-btn">GAME DETAILS</button>
+        <button id="pause-how-to-play-btn" class="menu-btn">HOW TO PLAY</button>
+        <button id="pause-main-menu-btn" class="menu-btn">MAIN MENU</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- End screen (win/fail) -->
+  <div id="end-screen" class="menu-screen" style="display: none;">
+    <div class="menu-content menu-content-narrow end-screen-content">
+      <div id="end-title" class="end-title end-title-win">SHIFT COMPLETE</div>
+      <div id="end-subtitle" class="end-subtitle">Well done.</div>
+
+      <div class="end-score-block">
+        <div class="end-score-row">
+          <span class="end-score-label">SCORE</span>
+          <span id="end-score-value" class="end-score-value">5 / 5</span>
+        </div>
+        <div class="end-score-row">
+          <span class="end-score-label">CORRECT</span>
+          <span id="end-correct-value" class="end-score-value end-correct">5</span>
+        </div>
+        <div class="end-score-row">
+          <span class="end-score-label">WRONG</span>
+          <span id="end-wrong-value" class="end-score-value end-wrong">0</span>
+        </div>
+      </div>
+
+      <div id="end-fired-block" class="end-fired-block" style="display: none;">
+        <div class="end-fired-title">EMPLOYEES FIRED DUE TO YOUR DECISIONS</div>
+        <div id="end-fired-list" class="end-fired-list"></div>
+      </div>
+
+      <div class="menu-buttons menu-buttons-row end-buttons">
+        <button id="end-retry-btn" class="menu-btn menu-btn-primary" style="display: none;">RETRY</button>
+        <button id="end-quit-btn" class="menu-btn">RETURN TO MAIN MENU</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud" class="hud" style="display: none;">
+    <div class="hud-topbar">
+      <button id="roster-card-btn" class="hud-card hud-card-roster">
+        <div class="hud-card-icon">▼</div>
+        <div class="hud-card-text">
+          <div class="hud-card-title">EMPLOYEE ROSTER</div>
+          <div class="hud-card-sub">SECURESHIFT</div>
+          <div id="hud-difficulty-label" class="hud-card-sub-sm">SHIFT 01</div>
+        </div>
+      </button>
+      <div id="hud-time-card" class="hud-card hud-card-time">
+        <div class="hud-card-icon">🕐</div>
+        <div class="hud-card-text">
+          <div class="hud-card-title">SHIFT TIME</div>
+          <div id="hud-shift-time" class="hud-card-value">00:00 / 02:00</div>
+        </div>
+      </div>
+      <div class="hud-right-stack">
+        <div class="hud-card hud-card-staff">
+          <div class="hud-card-icon">👥</div>
+          <div class="hud-card-text">
+            <div class="hud-card-title">STAFF</div>
+            <div class="hud-card-staff-row"><span class="hud-card-staff-label">Active:</span><span id="hud-active-count" class="hud-card-staff-num">12/12</span></div>
+            <div class="hud-card-staff-row"><span class="hud-card-staff-label">Fired:</span><span id="hud-fired-count" class="hud-card-staff-num hud-fired-num">0</span></div>
+          </div>
+        </div>
+        <div class="hud-card hud-card-tasks">
+          <div class="hud-card-icon">📋</div>
+          <div class="hud-card-text">
+            <div class="hud-card-title">TASKS</div>
+            <div class="hud-card-task-row"><span class="hud-card-task-label">Progress</span><span id="hud-task-count" class="hud-card-task-num">0 / 5</span></div>
+            <div class="hud-mini-progress"><div id="hud-mini-progress-fill" class="hud-mini-progress-fill"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hud-status-panel" id="hud-status-panel">
+      <div class="hud-label">STATUS</div>
+      <div class="hud-value" id="hud-focus-value">FOCUSED</div>
+    </div>
+
+    <div id="hud-inspect-panel" class="hud-inspect-panel" style="display: none;">
+      <div class="hud-label">EMPLOYEE</div>
+      <div id="hud-emp-name" class="hud-value">Employee01</div>
+      <div class="hud-label">TASK</div>
+      <div id="hud-emp-task" class="hud-value">1 / 5</div>
+      <div class="hud-label">STRIKES</div>
+      <div id="hud-emp-strikes" class="hud-value">0 / 3</div>
+    </div>
+  </div>
+
+  <!-- Roster side panel -->
+  <div id="roster-side-panel" class="roster-side-panel" style="display: none;">
+    <div class="rsp-header">
+      <span class="rsp-header-icon">👥</span>
+      <span class="rsp-header-title">EMPLOYEE ROSTER</span>
+      <button id="roster-close-btn" class="rsp-close-btn">✕</button>
+    </div>
+    <div class="rsp-shift-block">
+      <div class="rsp-brand">SECURESHIFT</div>
+      <div class="rsp-shift">SHIFT 01 (Security)</div>
+    </div>
+    <div class="rsp-stats-block">
+      <div class="rsp-stat-row"><span class="rsp-stat-label">Staff:</span><span id="rsp-staff-val" class="rsp-stat-val">12/12 (A)</span></div>
+      <div class="rsp-stat-row"><span class="rsp-stat-label">Fired:</span><span id="rsp-fired-val" class="rsp-stat-val">0</span></div>
+      <div class="rsp-stat-divider"></div>
+      <div class="rsp-stat-row"><span class="rsp-stat-label">Task Status:</span><span id="rsp-task-val" class="rsp-stat-val">0/5</span></div>
+      <div class="rsp-mini-progress"><div id="rsp-mini-progress-fill" class="rsp-mini-progress-fill"></div></div>
+    </div>
+    <div class="rsp-list-header"><span>EMPLOYEES</span></div>
+    <div id="roster-side-list" class="roster-side-list"></div>
+  </div>
+
+  <!-- Employee detail panel -->
+  <div id="employee-detail-overlay" class="employee-detail-overlay" style="display: none;">
+    <div class="employee-detail-panel">
+      <div class="employee-detail-header">
+        <span id="employee-detail-name" class="employee-detail-name">EMPLOYEE01</span>
+        <button id="employee-detail-close-btn" class="employee-detail-close-btn">✕</button>
+      </div>
+      <div class="employee-detail-body">
+        <div class="employee-detail-row"><span class="employee-detail-label">Status:</span><span id="employee-detail-status" class="employee-detail-value">😊 CONFIDENT</span></div>
+        <div class="employee-detail-row"><span class="employee-detail-label">Health:</span><span id="employee-detail-health" class="employee-detail-value">100 / 100</span></div>
+        <div class="employee-detail-healthbar-wrap"><div id="employee-detail-healthbar" class="employee-detail-healthbar"></div></div>
+        <div class="employee-detail-row"><span class="employee-detail-label">Strikes:</span><span id="employee-detail-strikes" class="employee-detail-value">0 / 3</span></div>
+        <div class="employee-detail-row"><span class="employee-detail-label">Tasks done:</span><span id="employee-detail-tasks" class="employee-detail-value">0 / 5</span></div>
+        <div class="employee-detail-row"><span class="employee-detail-label">Correct:</span><span id="employee-detail-correct" class="employee-detail-value">0</span></div>
+        <div class="employee-detail-row"><span class="employee-detail-label">Wrong:</span><span id="employee-detail-wrong" class="employee-detail-value">0</span></div>
+        <div class="employee-detail-mood"><span class="employee-detail-mood-label">Mood:</span><span id="employee-detail-mood-text">"Doing fine, thanks."</span></div>
+        <div class="employee-detail-history-title">TASK HISTORY</div>
+        <div id="employee-detail-history" class="employee-detail-history">
+          <div class="employee-detail-history-empty">No tasks done yet.</div>
+        </div>
+      </div>
+      <div class="employee-detail-actions">
+        <button id="employee-detail-locate-btn" class="employee-detail-btn employee-detail-btn-primary">LOCATE ON MAP</button>
+        <button id="employee-detail-close-btn-2" class="employee-detail-btn">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="interaction-prompt" class="interaction-prompt">Press E to interact</div>
+
+  <div id="consequence-overlay" class="consequence-overlay" style="display: none;">
+    <div id="consequence-panel" class="consequence-panel">
+      <div id="consequence-title" class="consequence-title">WARNING</div>
+      <div id="consequence-body" class="consequence-body"></div>
+      <div id="consequence-strikes" class="consequence-strikes">Strikes: 1 / 3</div>
+      <button id="consequence-continue-btn" class="consequence-continue-btn">CONTINUE</button>
+    </div>
+  </div>
+
+  <!-- Workstation -->
+  <div id="workstation-overlay" class="workstation-overlay">
+    <div id="boot-screen" class="boot-screen">
+      <div class="boot-logo">SECURESHIFT</div>
+      <div class="boot-spinner"></div>
+      <div class="boot-text">Starting workstation...</div>
+    </div>
+
+    <div id="workstation-main-panel" class="desktop">
+      <div class="desktop-topbar">
+        <span class="desktop-employee">Employee: <span id="workstation-employee-name">Employee01</span></span>
+      </div>
+      <div class="desktop-wallpaper-text">
+        <div class="desktop-logo">SECURESHIFT</div>
+        <div class="desktop-subtitle">Corporate Workstation</div>
+      </div>
+      <div class="desktop-icons">
+        <button class="desktop-icon workstation-app-btn" data-app="MAIL"><span class="desktop-icon-glyph">&#9993;</span><span class="desktop-icon-label">MAIL</span></button>
+        <button class="desktop-icon workstation-app-btn" data-app="CHAT"><span class="desktop-icon-glyph">&#128172;</span><span class="desktop-icon-label">CHAT</span></button>
+        <button class="desktop-icon workstation-app-btn" data-app="BROWSER"><span class="desktop-icon-glyph">&#127760;</span><span class="desktop-icon-label">BROWSER</span></button>
+        <button class="desktop-icon workstation-app-btn" data-app="SECURITY"><span class="desktop-icon-glyph">&#128737;</span><span class="desktop-icon-label">SECURITY CENTRE</span></button>
+        <button class="desktop-icon desktop-icon-inert" data-app="MY_COMPUTER"><span class="desktop-icon-glyph">&#128421;</span><span class="desktop-icon-label">MY COMPUTER</span></button>
+        <button class="desktop-icon desktop-icon-inert" data-app="HELP"><span class="desktop-icon-glyph">?</span><span class="desktop-icon-label">HELP</span></button>
+      </div>
+      <div id="workstation-app-message" class="workstation-app-message desktop-app-message"></div>
+    </div>
+
+    <div id="workstation-task-bar" class="workstation-task-bar" style="display: none;"></div>
+
+    <!-- Mail -->
+    <div id="mail-panel" class="app-window mail-app-window" style="display: none;">
+      <div class="app-window-titlebar">
+        <span class="app-window-icon">&#9993;</span>
+        <span class="app-window-title">Mail — SecureShift Outlook</span>
+        <div class="app-window-controls">
+          <button class="app-window-btn app-window-minimize" data-close-target="mail">&#8212;</button>
+          <button class="app-window-btn app-window-maximize" data-maximize-target="mail-panel">&#9633;</button>
+          <button class="app-window-btn app-window-close" data-close-target="mail">&#10005;</button>
+        </div>
+      </div>
+      <div class="app-window-body mail-app-body">
+        <div class="gmail-header">
+          <span class="gmail-menu-icon">&#9776;</span>
+          <span class="gmail-logo">Outlook</span>
+          <div class="gmail-search">
+            <span class="gmail-search-icon">&#128269;</span>
+            <input class="gmail-search-input" type="text" placeholder="Search mail" disabled />
+          </div>
+          <div class="gmail-header-icons">
+            <span class="gmail-header-icon" title="Help">?</span>
+            <span class="gmail-header-icon" title="Settings">&#9881;</span>
+            <span class="gmail-header-icon" title="Notifications">&#128276;</span>
+            <span class="avatar-circle gmail-avatar">E</span>
+          </div>
+        </div>
+        <div class="gmail-body">
+          <div class="gmail-sidebar">
+            <button id="mail-compose-btn" class="gmail-compose-btn">+ New mail</button>
+            <div id="mail-compose-message" class="gmail-compose-message"></div>
+            <div class="gmail-nav-item gmail-nav-item-active">&#9993; Inbox <span class="mail-unread-badge">1</span></div>
+            <div class="gmail-nav-item">&#9733; Flagged</div>
+            <div class="gmail-nav-item">&#128337; Snoozed</div>
+            <div class="gmail-nav-item">&#9654; Sent Items</div>
+            <div class="gmail-nav-item">&#128221; Drafts</div>
+            <div class="gmail-nav-divider"></div>
+            <div class="gmail-nav-item">Archive</div>
+            <div class="gmail-nav-item">Junk Email</div>
+            <div class="gmail-nav-item">Deleted Items</div>
+          </div>
+          <div class="gmail-main">
+            <div id="mail-inbox-view" class="gmail-view">
+              <div class="gmail-toolbar">
+                <span class="gmail-toolbar-icon" title="Select">&#9744;</span>
+                <span id="mail-refresh-btn" class="gmail-toolbar-icon" title="Refresh">&#8635;</span>
+                <span class="gmail-toolbar-icon" title="More">&#8942;</span>
+                <button id="mail-back-btn" class="gmail-close-btn">&#8592; Close Mail</button>
+              </div>
+              <div class="gmail-inbox-list">
+                <button id="mail-item" class="gmail-row gmail-row-unread">
+                  <span class="gmail-row-checkbox">&#9744;</span>
+                  <span class="gmail-row-star">&#9734;</span>
+                  <span id="mail-row-avatar" class="avatar-circle">?</span>
+                  <span id="mail-row-sender" class="gmail-row-sender">Loading...</span>
+                  <span id="mail-row-subject" class="gmail-row-subject">Loading...</span>
+                  <span id="mail-row-preview" class="gmail-row-preview">&mdash; Loading&hellip;</span>
+                  <span id="mail-row-time" class="gmail-row-time">09:42</span>
+                </button>
+              </div>
+            </div>
+            <div id="mail-email-view" class="gmail-view" style="display: none;">
+              <button id="mail-back-to-inbox-btn" class="gmail-back-link">&#8592; Back to Inbox</button>
+              <div class="gmail-toolbar">
+                <span class="gmail-toolbar-icon" title="Archive">&#128452;</span>
+                <span class="gmail-toolbar-icon" title="Report">&#128681;</span>
+                <span class="gmail-toolbar-icon" title="Delete">&#128465;</span>
+                <span class="gmail-toolbar-icon" title="Mark unread">&#9993;</span>
+                <span class="gmail-toolbar-icon" title="More">&#8942;</span>
+              </div>
+              <div class="gmail-reading-pane">
+                <h2 id="mail-email-subject-el" class="gmail-email-subject">Loading...</h2>
+                <div class="gmail-email-header-row">
+                  <span id="mail-email-avatar" class="avatar-circle">?</span>
+                  <div class="gmail-email-header-text">
+                    <div>
+                      <strong id="mail-email-sender-name" class="mail-sender-clickable">Loading...</strong>
+                      <span class="gmail-dropdown-arrow">&#9662;</span>
+                      <span id="mail-email-sender-chip" class="mail-sender-chip">Loading...</span>
+                    </div>
+                    <div class="gmail-email-to">to <span id="mail-email-recipient">Employee01</span></div>
+                  </div>
+                  <div id="mail-email-time" class="gmail-email-time">09:42</div>
+                </div>
+                <div id="mail-sender-details" class="mail-sender-details" style="display: none;">
+                  <div class="mail-sender-details-row"><span class="mail-sender-details-label">From:</span><span id="mail-detail-from" class="mail-sender-details-value">—</span></div>
+                  <div class="mail-sender-details-row"><span class="mail-sender-details-label">Reply-To:</span><span id="mail-detail-replyto" class="mail-sender-details-value">—</span></div>
+                  <div class="mail-sender-details-row"><span class="mail-sender-details-label">Return-Path:</span><span id="mail-detail-returnpath" class="mail-sender-details-value">—</span></div>
+                  <div class="mail-sender-details-row"><span class="mail-sender-details-label">SPF:</span><span id="mail-detail-spf" class="mail-sender-details-value">—</span></div>
+                  <div class="mail-sender-details-row"><span class="mail-sender-details-label">DKIM:</span><span id="mail-detail-dkim" class="mail-sender-details-value">—</span></div>
+                  <div class="mail-sender-details-row"><span class="mail-sender-details-label">Origin:</span><span id="mail-detail-origin" class="mail-sender-details-value">—</span></div>
+                </div>
+                <div id="mail-email-body-el" class="gmail-email-body"><p>Loading...</p></div>
+                <div id="mail-security-action-el" class="gmail-security-action">
+                  <div class="gmail-security-heading">SECURITY ACTION</div>
+                  <div id="mail-security-question-el" class="gmail-security-question">Is this email suspicious?</div>
+                  <div class="mail-decision-buttons">
+                    <button id="mail-report-btn" class="mail-decision-btn mail-decision-btn-primary">Report as phishing</button>
+                    <button id="mail-open-link-btn" class="mail-decision-btn mail-decision-btn-secondary">Continue safely</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="mail-result-view" class="gmail-view" style="display: none;">
+              <div class="gmail-reading-pane">
+                <div class="gmail-result-panel">
+                  <div id="mail-result-title" class="mail-result-title"></div>
+                  <div id="mail-result-body" class="mail-result-body"></div>
+                  <button id="mail-continue-btn" class="gmail-continue-btn">CONTINUE</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat -->
+    <div id="chat-panel" class="app-window" style="display: none;">
+      <div class="app-window-titlebar">
+        <span class="app-window-icon">&#128172;</span>
+        <span class="app-window-title">Chat — SecureShift Teams</span>
+        <div class="app-window-controls">
+          <button class="app-window-btn app-window-minimize" data-close-target="chat">&#8212;</button>
+          <button class="app-window-btn app-window-maximize" data-maximize-target="chat-panel">&#9633;</button>
+          <button class="app-window-btn app-window-close" data-close-target="chat">&#10005;</button>
+        </div>
+      </div>
+      <div class="app-window-body">
+        <div id="chat-main-view" class="mail-view">
+          <div class="workstation-header">
+            <span class="workstation-title">MICROSOFT TEAMS</span>
+            <span class="workstation-employee">Employee: <span id="chat-employee-name">Employee01</span></span>
+          </div>
+          <div class="mail-layout">
+            <div class="mail-sidebar">
+              <div class="mail-sidebar-item mail-sidebar-item-active">Chat</div>
+            </div>
+            <div class="mail-list" id="chat-contact-list"></div>
+          </div>
+          <button id="chat-back-btn" class="workstation-exit-btn mail-secondary-btn">&#8592; BACK</button>
+        </div>
+        <div id="chat-conversation-view" class="mail-view" style="display: none;">
+          <div class="mail-email-meta chat-conversation-header">
+            <div id="chat-conversation-name" class="chat-conversation-name">—</div>
+            <div id="chat-conversation-status" class="chat-conversation-status">—</div>
+          </div>
+          <div id="chat-message-area"></div>
+          <button id="chat-conversation-back-btn" class="workstation-exit-btn mail-secondary-btn" style="margin-top: 14px;">&#8592; BACK</button>
+        </div>
+        <div id="chat-result-view" class="mail-view" style="display: none;">
+          <div id="chat-result-title" class="mail-result-title"></div>
+          <div id="chat-result-body" class="mail-result-body"></div>
+          <button id="chat-continue-btn" class="workstation-exit-btn mail-secondary-btn">CONTINUE</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Browser -->
+    <div id="browser-panel" class="app-window" style="display: none;">
+      <div class="app-window-titlebar">
+        <span class="app-window-icon">&#127760;</span>
+        <span class="app-window-title">Browser — SecureShift Edge</span>
+        <div class="app-window-controls">
+          <button class="app-window-btn app-window-minimize" data-close-target="browser">&#8212;</button>
+          <button class="app-window-btn app-window-maximize" data-maximize-target="browser-panel">&#9633;</button>
+          <button class="app-window-btn app-window-close" data-close-target="browser">&#10005;</button>
+        </div>
+      </div>
+      <div class="app-window-body">
+        <div id="browser-main-view" class="mail-view">
+          <div class="workstation-header">
+            <span class="workstation-title">SECURESHIFT BROWSER</span>
+            <span class="workstation-employee">Employee: <span id="browser-employee-name">Employee01</span></span>
+          </div>
+          <div class="browser-nav-row">
+            <span class="browser-nav-icon">&#8592;</span>
+            <span class="browser-nav-icon">&#8594;</span>
+            <span class="browser-nav-icon">&#8635;</span>
+            <div id="browser-address-bar-el" class="browser-address-bar">about:blank</div>
+          </div>
+          <div id="browser-page-content" class="browser-page-content"><p>Loading page...</p></div>
+          <div id="browser-security-action-el" class="gmail-security-action" style="display: none;">
+            <div class="gmail-security-heading">SECURITY ACTION</div>
+            <div id="browser-security-question-el" class="gmail-security-question">What do you want to do?</div>
+            <div class="mail-decision-buttons">
+              <button id="browser-report-btn" class="mail-decision-btn mail-decision-btn-primary">Report as malicious</button>
+              <button id="browser-verify-btn" class="mail-decision-btn mail-decision-btn-secondary">Continue anyway</button>
+            </div>
+          </div>
+          <button id="browser-back-btn" class="workstation-exit-btn mail-secondary-btn" style="margin-top: 14px;">&#8592; BACK</button>
+        </div>
+        <div id="browser-result-view" class="mail-view" style="display: none;">
+          <div id="browser-result-title" class="mail-result-title"></div>
+          <div id="browser-result-body" class="mail-result-body"></div>
+          <button id="browser-continue-btn" class="workstation-exit-btn mail-secondary-btn">CONTINUE</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Centre -->
+    <div id="security-panel" class="app-window security-centre-window" style="display: none;">
+      <div class="app-window-titlebar">
+        <span class="app-window-icon">&#128737;</span>
+        <span class="app-window-title">Security Centre — Microsoft Defender</span>
+        <div class="app-window-controls">
+          <button class="app-window-btn app-window-minimize" data-close-target="security">&#8212;</button>
+          <button class="app-window-btn app-window-maximize" data-maximize-target="security-panel">&#9633;</button>
+          <button class="app-window-btn app-window-close" data-close-target="security">&#10005;</button>
+        </div>
+      </div>
+      <div class="app-window-body security-body">
+        <div class="sec-header">
+          <span class="sec-title">WINDOWS SECURITY — THREAT &amp; VIRUS PROTECTION</span>
+          <span class="sec-employee">Device: <span id="security-employee-name">Employee01</span></span>
+        </div>
+        <div id="sec-pending-view" style="display: none;">
+          <div class="sec-alert-banner">
+            <div class="sec-alert-badge">⚠ ACTIVE SECURITY ALERT</div>
+            <div id="sec-alert-title" class="sec-alert-title">Alert</div>
+            <div id="sec-alert-text" class="sec-alert-text"></div>
+            <div id="sec-alert-meta" class="sec-alert-meta"></div>
+          </div>
+          <div class="sec-alert-question">What would you like to do with this alert?</div>
+          <div class="mail-decision-buttons">
+            <button id="sec-alert-report-btn" class="mail-decision-btn mail-decision-btn-primary">REPORT AS THREAT</button>
+            <button id="sec-alert-ignore-btn" class="mail-decision-btn mail-decision-btn-secondary">DISMISS AS SAFE</button>
+          </div>
+        </div>
+        <div id="sec-clear-view">
+          <div class="sec-cards-grid">
+            <div class="sec-card"><div class="card-title">VIRUS &amp; THREAT PROTECTION</div><div class="card-status status-ok">✓ No actions needed</div><div class="card-sub">Last scan: Today, 09:35</div></div>
+            <div class="sec-card"><div class="card-title">ACCOUNT PROTECTION</div><div class="card-status status-ok">✓ No issues</div><div class="card-sub">Sign-in activity normal</div></div>
+            <div class="sec-card"><div class="card-title">FIREWALL &amp; NETWORK</div><div class="card-status status-ok">✓ Connected</div><div class="card-sub">Corporate network</div></div>
+            <div class="sec-card"><div class="card-title">APP &amp; BROWSER CONTROL</div><div class="card-status status-ok">✓ Enabled</div><div class="card-sub">SmartScreen active</div></div>
+          </div>
+          <div class="sec-details-grid">
+            <div class="sec-panel">
+              <h3>SECURITY HEALTH</h3>
+              <div class="health-bar"><div class="health-fill" style="width:100%"></div></div>
+              <div class="health-label">All systems protected</div>
+              <ul class="sec-checklist">
+                <li><span class="check">✓</span> Real-time protection on</li>
+                <li><span class="check">✓</span> Cloud-delivered protection on</li>
+                <li><span class="check">✓</span> Automatic sample submission on</li>
+                <li><span class="check">✓</span> Tamper protection on</li>
+              </ul>
+              <h3 class="mt-15">QUICK ACTIONS</h3>
+              <div class="action-buttons">
+                <button class="sec-action-btn" id="sec-scan-btn">QUICK SCAN</button>
+                <button class="sec-action-btn" id="sec-log-btn">PROTECTION HISTORY</button>
+                <button class="sec-action-btn" id="sec-report-btn">REPORT AN INCIDENT</button>
+              </div>
+            </div>
+            <div class="sec-panel">
+              <h3>DEVICE INFORMATION</h3>
+              <table class="sec-info">
+                <tr><td>Device:</td><td>SECURESHIFT-WKS-<span id="sec-device-id">01</span></td></tr>
+                <tr><td>OS:</td><td>Windows 11 Enterprise 23H2</td></tr>
+                <tr><td>Defender version:</td><td>4.18.24040.4</td></tr>
+                <tr><td>Signatures:</td><td>1.417.642.0</td></tr>
+              </table>
+              <h3 class="mt-15">PROTECTION HISTORY</h3>
+              <ul class="activity-log">
+                <li><span class="log-time">09:35</span> Quick scan completed — no threats</li>
+                <li><span class="log-time">09:22</span> Signatures updated successfully</li>
+                <li><span class="log-time">09:10</span> User signed in</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div id="sec-result-view" style="display: none;">
+          <div id="sec-result-title" class="mail-result-title"></div>
+          <div id="sec-result-body" class="mail-result-body"></div>
+          <button id="sec-result-continue-btn" class="gmail-continue-btn">CONTINUE</button>
+        </div>
+        <div id="security-message" class="workstation-app-message"></div>
+        <button id="security-back-btn" class="workstation-exit-btn mail-secondary-btn">&#8592; BACK</button>
+      </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="taskbar">
+      <div class="taskbar-start">&#9724; SECURESHIFT</div>
+      <div class="taskbar-search">&#128269;</div>
+      <div id="taskbar-apps" class="taskbar-apps"></div>
+      <div class="taskbar-right">
+        <span class="taskbar-icon">&#128225;</span>
+        <span class="taskbar-icon">&#128266;</span>
+        <span class="taskbar-icon">&#128267;</span>
+        <span id="taskbar-clock" class="taskbar-clock">09:42</span>
+        <button id="workstation-exit-btn" class="taskbar-power-btn">&#9211; Exit</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+  <script src="script.js" defer></script>
+</body>
+</html>
